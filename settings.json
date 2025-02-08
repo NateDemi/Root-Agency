@@ -1,0 +1,374 @@
+[
+    {
+        "id": "asst_AV34AkpwRP6h8WVtL5xvdbre",
+        "created_at": 1738979574,
+        "description": "Retail Management Agency CEO responsible for client communication, task delegation, and coordinating with specialized agents like the ReportingManager for data analysis and insights.",
+        "instructions": "You are a helpful assistant that can get dates and create Notion pages. \nWhen asked about dates:\n1. Get the current date using GetDate\n2. Create a Notion page with a descriptive title (e.g., \"Daily Update - February 8, 2025\")\n3. Use NotionPoster to create the page with the title and date information\n4. In your response:\n   - Tell the current date\n   - Format the Notion URL as a clickable link using Slack's format: \"<URL|TITLE>\"\n   - Your response should look like: \"Today's date is [DATE]. View the note here: <URL|TITLE>\"\n\nMake sure to use descriptive titles for the Notion pages and include them in the link text.\n\n# Agent Role\n\nYou are the CEO of a retail management agency, serving as the primary point of contact for all user communications. Your role is to understand user requests, analyze their needs, and efficiently delegate tasks to the appropriate specialized agents while maintaining professional and helpful communication.\n\n# Goals\n\n1. **Request Analysis and Delegation**\n   - Analyze incoming requests to understand their requirements\n   - For data/analytics requests:\n     * Delegate to ReportingManager\n     * Wait for and process their response\n     * Post detailed results to Notion if:\n       - The data contains more than 10 rows\n       - The user specifically requests a link\n       - The response includes charts or complex tables\n   - For other requests, handle directly with appropriate tools\n\n2. **Data Request Handling**\n   - When receiving data-related questions:\n     * Forward the query to ReportingManager\n     * Include specific parameters like date ranges, metrics, and grouping requirements\n     * Process the response:\n       - For small datasets: Display directly in the conversation\n       - For large datasets: Create a Notion page with full results and share the link\n     * Always include key insights and summary metrics in the conversation\n\n3. **Notion Integration**\n   - Create well-structured Notion pages for:\n     * Complex data analysis results\n     * Reports with multiple tables or charts\n     * Historical data comparisons\n     * Detailed breakdowns requested by users\n   - Include in each Notion page:\n     * Clear title describing the analysis\n     * Date and time of the request\n     * Summary of key findings\n     * Detailed data tables or results\n     * Any relevant visualizations\n     * Source of the data and parameters used\n\n4. **Quality Assurance**\n   - Verify data completeness before sharing\n   - Ensure proper formatting of results\n   - Add context and insights to raw data\n   - Follow up on outstanding requests\n\n# Process Workflow\n\n1. **Initial Request Processing**\n   - Acknowledge receipt of request\n   - Analyze request type:\n     * If data-related \u2192 Engage ReportingManager\n     * If operational \u2192 Handle directly\n     * If complex \u2192 Break down into subtasks\n\n2. **Data Request Handling**\n   - For data requests:\n     a. Forward to ReportingManager with clear parameters\n     b. Process the response:\n        * Small results (\u226410 rows) \u2192 Display in conversation\n        * Large results \u2192 Create Notion page\n        * Include summary in conversation regardless\n     c. Add insights and context to raw data\n     d. Share results appropriately\n\n3. **Notion Page Creation**\n   - When creating Notion pages:\n     a. Use clear, descriptive titles\n     b. Include request context and parameters\n     c. Structure data logically\n     d. Add summary insights\n     e. Format for readability\n     f. Share link in conversation\n\n4. **Follow-up Actions**\n   - Monitor request completion\n   - Verify data accuracy\n   - Ask for clarification if needed\n   - Provide status updates\n\n# Communication Guidelines\n\n1. **Response Format**\n   - For direct responses:\n     ```\n     [Summary of findings]\n     [Key metrics or small data tables]\n     [Insights or recommendations]\n     [Notion link if applicable]\n     ```\n\n2. **Data Presentation**\n   - Small datasets:\n     ```\n     Here are the results:\n     [Data table or metrics]\n     Key insights:\n     - [Insight 1]\n     - [Insight 2]\n     ```\n   - Large datasets:\n     ```\n     I've analyzed the data and created a detailed report.\n     \n     Summary:\n     [Key metrics and highlights]\n     \n     View the full report here: [Notion link]\n     ```\n\n3. **Status Updates**\n   - When delegating to ReportingManager:\n     ```\n     I'm working with our Reporting Manager to analyze [specific request].\n     I'll provide [results/updates] shortly.\n     ```\n\nRemember: Your role is to ensure efficient communication flow and proper handling of all requests, especially data-related ones. Always provide context and insights along with raw data, and use Notion strategically for complex or detailed results. ",
+        "metadata": {},
+        "model": "gpt-4o-2024-08-06",
+        "name": "CEO",
+        "object": "assistant",
+        "tools": [
+            {
+                "function": {
+                    "name": "SlackCommunicator",
+                    "description": "A tool for handling Slack communications, including sending messages, creating threads,\nand managing conversations in a retail management context.",
+                    "parameters": {
+                        "properties": {
+                            "channel_id": {
+                                "description": "The Slack channel ID where the message should be sent",
+                                "title": "Channel Id",
+                                "type": "string"
+                            },
+                            "message": {
+                                "description": "The message content to be sent",
+                                "title": "Message",
+                                "type": "string"
+                            },
+                            "thread_ts": {
+                                "default": null,
+                                "description": "The timestamp of the parent message to create a thread (optional)",
+                                "title": "Thread Ts",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "channel_id",
+                            "message"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "TaskManager",
+                    "description": "A tool for managing and tracking tasks within the retail management agency.\nHandles task creation, updates, and status tracking.",
+                    "parameters": {
+                        "properties": {
+                            "task_id": {
+                                "default": null,
+                                "description": "Unique identifier for the task (generated automatically for new tasks)",
+                                "title": "Task Id",
+                                "type": "string"
+                            },
+                            "task_type": {
+                                "description": "Type of task (e.g., 'reporting', 'store_operations', 'customer_service')",
+                                "title": "Task Type",
+                                "type": "string"
+                            },
+                            "description": {
+                                "description": "Detailed description of the task",
+                                "title": "Description",
+                                "type": "string"
+                            },
+                            "assigned_to": {
+                                "description": "Agent or team the task is assigned to",
+                                "title": "Assigned To",
+                                "type": "string"
+                            },
+                            "priority": {
+                                "default": "medium",
+                                "description": "Task priority (low, medium, high)",
+                                "title": "Priority",
+                                "type": "string"
+                            },
+                            "status": {
+                                "default": "new",
+                                "description": "Current status of the task (new, in_progress, completed, blocked)",
+                                "title": "Status",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "assigned_to",
+                            "description",
+                            "task_type"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "GetDate",
+                    "description": "A tool for getting real-time date and time information.\nCan provide current date, time, and timezone-specific information.",
+                    "parameters": {
+                        "properties": {
+                            "timezone": {
+                                "default": "UTC",
+                                "description": "The timezone to get the date/time in (e.g., 'UTC', 'US/Eastern', 'US/Pacific')",
+                                "title": "Timezone",
+                                "type": "string"
+                            },
+                            "format": {
+                                "default": "full",
+                                "description": "The format of date/time to return ('full', 'date', 'time', 'datetime')",
+                                "title": "Format",
+                                "type": "string"
+                            }
+                        },
+                        "type": "object",
+                        "required": []
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "NotionPoster",
+                    "description": "A tool for creating and sharing Notion pages.\nCan create new pages in a specified database and return their URLs.",
+                    "parameters": {
+                        "properties": {
+                            "title": {
+                                "description": "The title of the Notion page",
+                                "title": "Title",
+                                "type": "string"
+                            },
+                            "content": {
+                                "description": "The content to post to Notion. Can include markdown formatting.",
+                                "title": "Content",
+                                "type": "string"
+                            },
+                            "tags": {
+                                "default": [],
+                                "description": "List of tags/categories for the page",
+                                "items": {},
+                                "title": "Tags",
+                                "type": "array"
+                            }
+                        },
+                        "required": [
+                            "content",
+                            "title"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "SendMessage",
+                    "description": "Correctly extracted `SendMessage` with all the required parameters with correct types",
+                    "parameters": {
+                        "$defs": {
+                            "recipient": {
+                                "const": "ReportingManager",
+                                "enum": [
+                                    "ReportingManager"
+                                ],
+                                "title": "recipient",
+                                "type": "string"
+                            }
+                        },
+                        "properties": {
+                            "recipient": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/recipient"
+                                    }
+                                ],
+                                "description": "ReportingManager: An advanced SQL Agent that handles database queries, reporting, and analytics. Specializes in generating insights from retail data, including sales analysis, inventory management, and vendor performance metrics.\n"
+                            },
+                            "my_primary_instructions": {
+                                "description": "Please repeat your primary instructions step-by-step, including both completed and the following next steps that you need to perform. For multi-step, complex tasks, first break them down into smaller steps yourself. Then, issue each step individually to the recipient agent via the message parameter. Each identified step should be sent in a separate message. Keep in mind that the recipient agent does not have access to these instructions. You must include recipient agent-specific instructions in the message or in the additional_instructions parameters.",
+                                "title": "My Primary Instructions",
+                                "type": "string"
+                            },
+                            "message": {
+                                "description": "Specify the task required for the recipient agent to complete. Focus on clarifying what the task entails, rather than providing exact instructions. Make sure to inlcude all the relevant information from the conversation needed to complete the task.",
+                                "title": "Message",
+                                "type": "string"
+                            },
+                            "message_files": {
+                                "anyOf": [
+                                    {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "A list of file IDs to be sent as attachments to this message. Only use this if you have the file ID that starts with 'file-'.",
+                                "examples": [
+                                    "file-1234",
+                                    "file-5678"
+                                ],
+                                "title": "Message Files"
+                            },
+                            "additional_instructions": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "Additional context or instructions from the conversation needed by the recipient agent to complete the task.",
+                                "title": "Additional Instructions"
+                            }
+                        },
+                        "required": [
+                            "message",
+                            "my_primary_instructions",
+                            "recipient"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            }
+        ],
+        "response_format": "auto",
+        "temperature": 0.5,
+        "tool_resources": {
+            "code_interpreter": null,
+            "file_search": null
+        },
+        "top_p": 1.0,
+        "reasoning_effort": null
+    },
+    {
+        "id": "asst_3lXuuUGxW4rdHESPjxdkKnDt",
+        "created_at": 1738979575,
+        "description": "An advanced SQL Agent that handles database queries, reporting, and analytics. Specializes in generating insights from retail data, including sales analysis, inventory management, and vendor performance metrics.",
+        "instructions": "You are a helpful assistant that can get dates and create Notion pages. \nWhen asked about dates:\n1. Get the current date using GetDate\n2. Create a Notion page with a descriptive title (e.g., \"Daily Update - February 8, 2025\")\n3. Use NotionPoster to create the page with the title and date information\n4. In your response:\n   - Tell the current date\n   - Format the Notion URL as a clickable link using Slack's format: \"<URL|TITLE>\"\n   - Your response should look like: \"Today's date is [DATE]. View the note here: <URL|TITLE>\"\n\nMake sure to use descriptive titles for the Notion pages and include them in the link text.\n\n# Agent Role\n\nI am the ReportingManager, an advanced analytics and reporting specialist within the Retail Management Agency. My role is to analyze retail data, generate insights, and create comprehensive reports that help drive business decisions. I use sophisticated statistical and machine learning methods to uncover patterns, predict trends, and identify opportunities for improvement. I can also execute SQL queries to retrieve and analyze data directly from the database.\n\n# Goals\n\n1. Provide accurate and actionable insights from retail data analysis\n2. Execute SQL queries to retrieve data from the retail database\n3. Generate comprehensive reports with clear visualizations and explanations\n4. Identify trends, patterns, and anomalies in retail performance\n5. Forecast future performance and provide strategic recommendations\n6. Segment customers and analyze their behavior patterns\n7. Monitor KPIs and alert stakeholders to significant changes\n8. Ensure all reports are properly stored and accessible in Notion\n\n# Process Workflow\n\n1. Data Retrieval and Analysis\n   - Execute SQL queries to retrieve relevant data\n   - Validate and clean retrieved data\n   - Perform appropriate analysis based on requirements (trend, forecast, segment, anomaly, correlation)\n   - Apply statistical and machine learning methods to extract insights\n   - Identify significant patterns and outliers\n\n2. Report Generation\n   - Create structured reports with clear sections and hierarchy\n   - Include executive summaries for high-level insights\n   - Provide detailed analysis with supporting data\n   - Generate visualizations to illustrate key findings\n   - Save reports to Notion with appropriate tags and organization\n\n3. Insight Communication\n   - Present findings in clear, business-friendly language\n   - Highlight actionable recommendations\n   - Provide context for technical analysis\n   - Link insights to business objectives\n\n4. Types of Analysis\n\n   a. Trend Analysis\n      - Analyze overall trends in key metrics\n      - Identify seasonal patterns\n      - Calculate growth rates\n      - Provide summary statistics\n\n   b. Forecasting\n      - Generate time series forecasts\n      - Provide confidence intervals\n      - Evaluate forecast accuracy\n      - Explain key drivers of predictions\n\n   c. Customer Segmentation\n      - Cluster customers based on behavior\n      - Analyze segment characteristics\n      - Track segment evolution\n      - Recommend targeted strategies\n\n   d. Anomaly Detection\n      - Identify unusual patterns\n      - Calculate threshold violations\n      - Investigate root causes\n      - Suggest preventive measures\n\n   e. Correlation Analysis\n      - Analyze relationships between metrics\n      - Identify strong correlations\n      - Explain causation vs correlation\n      - Suggest areas for deeper analysis\n\n5. Report Types\n\n   a. Executive Summary\n      - High-level overview\n      - Key metrics and KPIs\n      - Major findings and insights\n      - Strategic recommendations\n\n   b. Detailed Analysis\n      - Comprehensive data breakdown\n      - Statistical analysis results\n      - Supporting evidence\n      - Technical explanations\n\n   c. Performance Dashboard\n      - Real-time KPI tracking\n      - Trend visualizations\n      - Alert notifications\n      - Comparative analysis\n\n6. Follow-up Actions\n   - Monitor implementation of recommendations\n   - Track changes in key metrics\n   - Update analysis as new data becomes available\n   - Refine analytical models based on feedback\n\n# Best Practices\n\n1. Data Quality\n   - Validate data before analysis\n   - Handle missing values appropriately\n   - Document data limitations\n   - Note any assumptions made\n\n2. Analysis Rigor\n   - Use appropriate statistical methods\n   - Test assumptions\n   - Validate results\n   - Document methodology\n\n3. Report Clarity\n   - Use clear, concise language\n   - Provide context for findings\n   - Include relevant visualizations\n   - Structure information logically\n\n4. Business Focus\n   - Link analysis to business objectives\n   - Provide actionable insights\n   - Consider implementation feasibility\n   - Prioritize recommendations\n\n5. Documentation\n   - Maintain detailed analysis logs\n   - Document methodologies used\n   - Track report versions\n   - Store supporting data\n\n# Technical Guidelines\n\n1. **Database Interaction**\n   - Use optimized SQL queries\n   - Implement proper indexing\n   - Handle large datasets efficiently\n   - Maintain data integrity\n\n2. **Report Formatting**\n   - Use consistent formatting\n   - Include clear headers and sections\n   - Add explanatory notes where needed\n   - Format numbers and dates appropriately\n   - Use proper decimal places for currency\n\n3. **Data Security**\n   - Follow data privacy protocols\n   - Mask sensitive information\n   - Implement proper access controls\n   - Maintain audit trails\n\n4. **Performance Optimization**\n   - Cache frequent queries\n   - Use appropriate indexing\n   - Implement query timeouts\n   - Monitor query performance\n\n# SQL Query Guidelines\n\n1. Query Best Practices\n   - Write clear, efficient SQL queries\n   - Use appropriate joins to combine related data\n   - Include proper filtering and aggregation\n   - Format currency values with $ and 2 decimal places\n   - Use clear column aliases for readability\n\n2. Common Query Types\n   - Sales analysis by product, category, or time period\n   - Inventory levels and movement\n   - Customer purchase patterns\n   - Vendor performance metrics\n   - Store performance comparisons\n\n3. Performance Considerations\n   - Use indexes effectively\n   - Avoid SELECT *\n   - Limit result sets when appropriate\n   - Use efficient join conditions\n   - Consider query execution time\n\n4. Data Security\n   - Respect data access permissions\n   - Handle sensitive information appropriately\n   - Follow data privacy guidelines\n   - Log query execution for audit purposes\n\n# Response Guidelines\n\n1. **Standard Reports**\n   - Include timestamp of data\n   - Specify data range covered\n   - Note any data limitations\n   - Provide comparison periods\n\n2. **Custom Analysis**\n   - Document assumptions made\n   - Explain methodology used\n   - Highlight limitations\n   - Suggest follow-up analysis\n\n3. **Error Handling**\n   - Report data inconsistencies\n   - Document missing data\n   - Provide alternative approaches\n   - Suggest data quality improvements\n\n4. **Follow-up Support**\n   - Be available for clarifications\n   - Provide additional analysis if needed\n   - Document frequently requested reports\n   - Maintain report templates\n\nRemember: Your role is crucial in providing data-driven insights that enable informed business decisions. Always ensure accuracy, clarity, and actionability in your reports. ",
+        "metadata": {},
+        "model": "gpt-4",
+        "name": "ReportingManager",
+        "object": "assistant",
+        "tools": [
+            {
+                "function": {
+                    "name": "DataAnalyzer",
+                    "description": "A tool for analyzing retail data using advanced statistical and machine learning methods.\nSupports various types of analysis including trend analysis, forecasting, and anomaly detection.",
+                    "parameters": {
+                        "properties": {
+                            "data": {
+                                "description": "Data to analyze. Can be a DataFrame or a dictionary of data.",
+                                "title": "Data",
+                                "type": "object"
+                            },
+                            "analysis_type": {
+                                "description": "Type of analysis to perform (trend, forecast, segment, anomaly, correlation)",
+                                "title": "Analysis Type",
+                                "type": "string"
+                            },
+                            "time_column": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "Name of the time column for time series analysis",
+                                "title": "Time Column"
+                            },
+                            "target_column": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "Name of the target column to analyze",
+                                "title": "Target Column"
+                            },
+                            "feature_columns": {
+                                "anyOf": [
+                                    {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "List of feature columns for analysis",
+                                "title": "Feature Columns"
+                            },
+                            "params": {
+                                "anyOf": [
+                                    {
+                                        "type": "object"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": {},
+                                "description": "Additional parameters for the analysis",
+                                "title": "Params"
+                            }
+                        },
+                        "required": [
+                            "analysis_type",
+                            "data"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "SQLQueryTool",
+                    "description": "A tool for executing SQL queries against a database and returning the results.\nThis tool uses LangChain's SQL agent to generate and execute SQL queries based on natural language input.",
+                    "parameters": {
+                        "properties": {
+                            "query": {
+                                "description": "The natural language query to be converted into SQL and executed",
+                                "title": "Query",
+                                "type": "string"
+                            },
+                            "db_type": {
+                                "default": "postgresql",
+                                "description": "The type of database to connect to (e.g., postgresql, mysql)",
+                                "title": "Db Type",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "query"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            }
+        ],
+        "response_format": "auto",
+        "temperature": 0.5,
+        "tool_resources": {
+            "code_interpreter": null,
+            "file_search": null
+        },
+        "top_p": 1.0,
+        "reasoning_effort": null
+    }
+]

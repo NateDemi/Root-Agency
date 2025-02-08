@@ -1,0 +1,76 @@
+2025-02-08 09:27:27,260 [INFO] ==================================================
+2025-02-08 09:27:27,260 [INFO] Starting Retail Management Agency Slack Bot...
+2025-02-08 09:27:27,260 [INFO] Monitoring channel: T0879KE1LKB
+2025-02-08 09:27:27,260 [INFO] Bot started at: 2025-02-08 09:27:27
+2025-02-08 09:27:27,260 [INFO] ==================================================
+2025-02-08 09:28:50,889 [INFO] ==================================================
+2025-02-08 09:28:50,889 [INFO] Starting Retail Management Agency Slack Bot...
+2025-02-08 09:28:51,593 [INFO] Bot user ID: U0893E87X70
+2025-02-08 09:28:52,312 [ERROR] Error getting DM channel: The request to the Slack API failed. (url: https://www.slack.com/api/conversations.list)
+The server responded with: {'ok': False, 'error': 'missing_scope', 'needed': 'im:read', 'provided': 'app_mentions:read,bookmarks:read,canvases:read,calls:write,assistant:write,bookmarks:write,calls:read,canvases:write,channels:history,channels:join,channels:manage,channels:read,channels:write.invites,channels:write.topic,chat:write,chat:write.customize,commands,emoji:read,conversations.connect:manage,conversations.connect:read,conversations.connect:write,groups:write,users:read.email,users:read,groups:history,im:history'}
+Traceback (most recent call last):
+  File "/Users/nathan.demissie/test/rvrpkg/Root-Agency/retail_agency/app.py", line 37, in get_bot_dm_channel
+    response = slack_client.conversations_list(types="im")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/nathan.demissie/test/rvrpkg/Root-Agency/venv/lib/python3.11/site-packages/slack_sdk/web/client.py", line 2963, in conversations_list
+    return self.api_call("conversations.list", http_verb="GET", params=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/nathan.demissie/test/rvrpkg/Root-Agency/venv/lib/python3.11/site-packages/slack_sdk/web/base_client.py", line 155, in api_call
+    return self._sync_send(api_url=api_url, req_args=req_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/nathan.demissie/test/rvrpkg/Root-Agency/venv/lib/python3.11/site-packages/slack_sdk/web/base_client.py", line 186, in _sync_send
+    return self._urllib_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/nathan.demissie/test/rvrpkg/Root-Agency/venv/lib/python3.11/site-packages/slack_sdk/web/base_client.py", line 317, in _urllib_api_call
+    ).validate()
+      ^^^^^^^^^^
+  File "/Users/nathan.demissie/test/rvrpkg/Root-Agency/venv/lib/python3.11/site-packages/slack_sdk/web/slack_response.py", line 199, in validate
+    raise e.SlackApiError(message=msg, response=self)
+slack_sdk.errors.SlackApiError: The request to the Slack API failed. (url: https://www.slack.com/api/conversations.list)
+The server responded with: {'ok': False, 'error': 'missing_scope', 'needed': 'im:read', 'provided': 'app_mentions:read,bookmarks:read,canvases:read,calls:write,assistant:write,bookmarks:write,calls:read,canvases:write,channels:history,channels:join,channels:manage,channels:read,channels:write.invites,channels:write.topic,chat:write,chat:write.customize,commands,emoji:read,conversations.connect:manage,conversations.connect:read,conversations.connect:write,groups:write,users:read.email,users:read,groups:history,im:history'}
+2025-02-08 09:28:52,322 [WARNING] Could not find bot DM channel
+2025-02-08 09:28:52,322 [INFO] Bot started at: 2025-02-08 09:28:52
+2025-02-08 09:28:52,322 [INFO] ==================================================
+2025-02-08 09:30:04,701 [INFO] ==================================================
+2025-02-08 09:30:04,701 [INFO] Starting Retail Management Agency Slack Bot...
+2025-02-08 09:30:04,701 [INFO] Monitoring DM channel: D088VGQRH63
+2025-02-08 09:30:04,701 [INFO] Bot started at: 2025-02-08 09:30:04
+2025-02-08 09:30:04,701 [INFO] ==================================================
+2025-02-08 09:31:19,507 [INFO] ==================================================
+2025-02-08 09:31:19,507 [INFO] Starting Retail Management Agency Slack Bot...
+2025-02-08 09:31:19,507 [INFO] Bot started at: 2025-02-08 09:31:19
+2025-02-08 09:31:19,508 [INFO] ==================================================
+2025-02-08 09:32:24,770 [INFO] ==================================================
+2025-02-08 09:32:24,770 [INFO] Starting Retail Management Agency Slack Bot...
+2025-02-08 09:32:24,770 [INFO] Bot started at: 2025-02-08 09:32:24
+2025-02-08 09:32:24,770 [INFO] ==================================================
+2025-02-08 09:32:31,711 [INFO] Processing message from user U087KP29JQ0 in channel D088VGQRH63
+2025-02-08 09:32:31,711 [INFO] Message content: hello
+2025-02-08 09:32:31,711 [INFO] Thread timestamp: 1738978067.034649
+2025-02-08 09:32:31,711 [INFO] Received message in channel D088VGQRH63: hello...
+2025-02-08 09:32:31,711 [INFO] Creating new agency instance...
+2025-02-08 09:32:33,366 [INFO] Agency created successfully
+2025-02-08 09:32:33,366 [INFO] Getting response from agency...
+2025-02-08 09:32:33,366 [ERROR] Error processing message: 'Agency' object has no attribute 'chat'
+Traceback (most recent call last):
+  File "/Users/nathan.demissie/test/rvrpkg/Root-Agency/retail_agency/app.py", line 69, in handle_slack_message
+    response = agency.chat(message)
+               ^^^^^^^^^^^
+AttributeError: 'Agency' object has no attribute 'chat'
+2025-02-08 09:32:56,056 [INFO] ==================================================
+2025-02-08 09:32:56,056 [INFO] Starting Retail Management Agency Slack Bot...
+2025-02-08 09:32:56,056 [INFO] Bot started at: 2025-02-08 09:32:56
+2025-02-08 09:32:56,056 [INFO] ==================================================
+2025-02-08 09:33:30,231 [INFO] Processing message from user U087KP29JQ0 in channel D088VGQRH63
+2025-02-08 09:33:30,232 [INFO] Message content: hello
+2025-02-08 09:33:30,232 [INFO] Thread timestamp: 1738978067.034649
+2025-02-08 09:33:30,232 [INFO] Received message in channel D088VGQRH63: hello...
+2025-02-08 09:33:30,232 [INFO] Creating new agency instance...
+2025-02-08 09:33:31,941 [INFO] Agency created successfully
+2025-02-08 09:33:31,941 [INFO] Getting response from agency...
+2025-02-08 09:33:31,941 [ERROR] Error processing message: 'Agency' object has no attribute 'run'
+Traceback (most recent call last):
+  File "/Users/nathan.demissie/test/rvrpkg/Root-Agency/retail_agency/app.py", line 69, in handle_slack_message
+    response = agency.run(message)
+               ^^^^^^^^^^
+AttributeError: 'Agency' object has no attribute 'run'
