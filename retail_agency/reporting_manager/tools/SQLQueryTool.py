@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from langchain_community.utilities import SQLDatabase
 from langchain_openai import ChatOpenAI
 from agency_swarm.tools import BaseTool
-from CustomSQLTool import create_structured_sql_agent
+from retail_agency.reporting_manager.tools.utils.CustomSQLTool import create_structured_sql_agent
 
 load_dotenv()
 
