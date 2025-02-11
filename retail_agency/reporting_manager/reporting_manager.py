@@ -1,8 +1,9 @@
 from agency_swarm import Agent
-from tools.SQLQueryTool import SQLQueryTool
+from .tools.SQLQueryTool import SQLQueryTool
 import logging
 import json
-from typing import Dict, Any, Optional
+import pandas as pd
+from typing import Dict, Any, List
 from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
@@ -16,68 +17,139 @@ class ReportingManager(Agent):
     def __init__(self):
         super().__init__(
             name="ReportingManager",
-            description="Handles database queries and provides data-driven insights",
+            description="Refines and rephrases incoming user questions into clear, natural language questions, passes them to the SQLQueryTool for execution, and returns actionable insights and summaries.",
             instructions="./instructions.md",
             tools=[SQLQueryTool],
             temperature=0,
             model="gpt-4"
         )
 
-    def _format_result_summary(self, result: Dict[str, Any]) -> Dict[str, Any]:
-        """Format query results into a summary with sample data and file locations."""
+    def _read_saved_data(self, file_path: str) -> pd.DataFrame:
+        """Read data from saved file (CSV or JSON)."""
         try:
-            total_rows = result.get('row_count', 0)
-            data = result.get('data', [])
-            files = {
-                "csv": result.get('csv_path'),
-                "json": result.get('json_path')
+            if file_path.endswith('.csv'):
+                return pd.read_csv(file_path)
+            elif file_path.endswith('.json'):
+                return pd.read_json(file_path)
+            return pd.DataFrame()
+        except Exception as e:
+            logger.error(f"Error reading file {file_path}: {str(e)}")
+            return pd.DataFrame()
+
+    def _generate_data_insights(self, df: pd.DataFrame, query: str) -> Dict[str, Any]:
+        """Generate dynamic insights from the data using LLM."""
+        try:
+            # Get dataframe info
+            columns = df.columns.tolist()
+            sample_data = df.head(3).to_dict('records')
+            basic_stats = {
+                col: {
+                    'type': str(df[col].dtype),
+                    'has_nulls': df[col].isnull().any(),
+                    'unique_count': df[col].nunique()
+                }
+                for col in columns
             }
+
+            # Create context for LLM
+            context = {
+                'original_query': query,
+                'total_rows': len(df),
+                'columns': columns,
+                'sample_data': sample_data,
+                'column_stats': basic_stats
+            }
+
+            # Create prompt for LLM
+            prompt = f"""Given this data context from a database query:
+Original Query: {query}
+Total Rows: {context['total_rows']}
+Available Columns: {', '.join(columns)}
+Sample Data: {json.dumps(sample_data, indent=2)}
+
+Analyze this data and provide:
+1. A natural language summary of what the data shows
+2. Key statistics or patterns that are relevant to the query
+3. Any notable insights or recommendations based on the data
+
+Focus on insights that are:
+- Directly relevant to the original query
+- Based on patterns in the numerical data (if any)
+- Actionable for business decisions
+- Highlight any critical patterns or outliers
+
+Format your response as a structured list of insights that's easy to read."""
+
+            # Get insights from LLM
+            response = self.model.predict(prompt)
             
+            # Return both raw stats and LLM insights
+            return {
+                "data_stats": context,
+                "insights": response
+            }
+
+        except Exception as e:
+            logger.error(f"Error generating insights: {str(e)}")
+            return {
+                "error": str(e),
+                "total_rows": len(df) if df is not None else 0
+            }
+
+    def _format_result_summary(self, result: Dict[str, Any]) -> Dict[str, Any]:
+        """Format query results into a summary with sample data and insights."""
+        try:
+            # Initialize summary structure
             summary = {
                 "natural_response": "",
                 "sample_data": [],
-                "total_rows": total_rows,
-                "files": files,
+                "total_rows": 0,
+                "files": {
+                    "csv": result.get('csv_path'),
+                    "json": result.get('json_path')
+                },
                 "query": result.get('query'),
                 "execution_time": datetime.now().isoformat()
             }
-            
-            # Generate natural language response based on result size
-            if total_rows == 0:
-                summary["natural_response"] = "No results found for your query."
-            else:
-                # Take first MAX_DISPLAY_ROWS for sample
-                sample_data = data[:self.MAX_DISPLAY_ROWS]
-                summary["sample_data"] = sample_data
-                
-                # Construct response based on data size
-                if total_rows <= self.MAX_DISPLAY_ROWS:
-                    summary["natural_response"] = f"Found {total_rows} items. Here are all the results:"
+
+            # Read the saved data
+            if summary["files"]["csv"]:
+                df = self._read_saved_data(summary["files"]["csv"])
+                if not df.empty:
+                    # Get basic stats and insights
+                    total_rows = len(df)
+                    sample_data = df.head(self.MAX_DISPLAY_ROWS).to_dict('records')
+                    insights = self._generate_data_insights(df, result.get('query', ''))
+
+                    # Create natural language response
+                    response_parts = []
+                    
+                    # Add LLM-generated insights
+                    if insights.get('insights'):
+                        response_parts.append(insights['insights'])
+                    else:
+                        response_parts.append(f"Found {total_rows} records matching your query.")
+
+                    if total_rows > self.MAX_DISPLAY_ROWS:
+                        response_parts.append(f"\nShowing first {self.MAX_DISPLAY_ROWS} items as sample.")
+                        response_parts.append("Complete results have been saved to:")
+                        response_parts.append(f"- CSV file: {summary['files']['csv']}")
+                        response_parts.append(f"- JSON file: {summary['files']['json']}")
+
+                    summary.update({
+                        "natural_response": "\n".join(response_parts),
+                        "sample_data": sample_data,
+                        "total_rows": total_rows,
+                        "insights": insights.get('data_stats'),
+                        "analysis": insights.get('insights')
+                    })
                 else:
-                    # Include file information in the response
-                    summary["natural_response"] = (
-                        f"Found {total_rows} items. Here are the first {self.MAX_DISPLAY_ROWS} items.\n"
-                        f"Complete results have been saved to:\n"
-                    )
-                    
-                    if files["csv"]:
-                        summary["natural_response"] += f"- CSV file: {files['csv']}\n"
-                    if files["json"]:
-                        summary["natural_response"] += f"- JSON file: {files['json']}\n"
-                    
-                    summary["natural_response"] += "\nYou can access the full dataset using these files."
-            
-            # Add metadata about the query execution
-            summary["metadata"] = {
-                "execution_time": summary["execution_time"],
-                "total_rows": total_rows,
-                "displayed_rows": len(summary["sample_data"]),
-                "has_more": total_rows > self.MAX_DISPLAY_ROWS,
-                "files_saved": bool(files["csv"] or files["json"])
-            }
-            
+                    summary["natural_response"] = "No results found for your query."
+            else:
+                summary["natural_response"] = "No results available."
+
             return summary
-            
+
         except Exception as e:
             logger.error(f"Error formatting result summary: {str(e)}")
             return {
@@ -91,11 +163,12 @@ class ReportingManager(Agent):
 
     def _validate_query_result(self, result: Dict[str, Any]) -> bool:
         """Validate that the query result has the expected structure."""
-        required_fields = ['type', 'data', 'row_count']
-        return all(field in result for field in required_fields)
+        if result.get('type') == 'error':
+            return False
+        return bool(result.get('csv_path') or result.get('json_path'))
 
     def handle_message(self, message: str) -> Dict[str, Any]:
-        """Handle incoming messages and return structured responses."""
+        """convert message to natural language question."""
         try:
             logger.info(f"Processing query: {message}")
             
@@ -120,18 +193,6 @@ class ReportingManager(Agent):
             logger.info(f"Generated response summary with {summary['total_rows']} total rows")
             return summary
             
-        except ValueError as ve:
-            error_msg = str(ve)
-            logger.error(error_msg)
-            return {
-                "natural_response": f"Error: {error_msg}",
-                "sample_data": [],
-                "total_rows": 0,
-                "files": {},
-                "query": message,
-                "execution_time": datetime.now().isoformat(),
-                "error": error_msg
-            }
         except Exception as e:
             error_msg = f"Error processing message: {str(e)}"
             logger.error(error_msg)
@@ -144,9 +205,6 @@ class ReportingManager(Agent):
                 "execution_time": datetime.now().isoformat(),
                 "error": error_msg
             }
-
-    def __str__(self) -> str:
-        return f"ReportingManager(max_display_rows={self.MAX_DISPLAY_ROWS})"
 
 if __name__ == "__main__":
     # Test the ReportingManager
@@ -166,18 +224,14 @@ if __name__ == "__main__":
                 for key, value in item.items():
                     print(f"{key}: {value}")
                     
-            if result["total_rows"] > len(result["sample_data"]):
-                print("\nFull results saved to:")
-                if result["files"].get("csv"):
-                    print(f"CSV: {result['files']['csv']}")
-                if result["files"].get("json"):
-                    print(f"JSON: {result['files']['json']}")
+            if result.get("insights"):
+                print("\nInsights:")
+                for key, value in result["insights"].items():
+                    if isinstance(value, pd.DataFrame):
+                        print(f"\n{key.replace('_', ' ').title()}:")
+                        print(value[['name', 'stock_count']].head().to_string())
+                    else:
+                        print(f"{key.replace('_', ' ').title()}: {value}")
         
-        # Print metadata if available
-        if "metadata" in result:
-            print("\nQuery Metadata:")
-            for key, value in result["metadata"].items():
-                print(f"{key}: {value}")
-            
     except Exception as e:
         print(f"Error in test execution: {str(e)}")
