@@ -1,0 +1,5 @@
+agency-swarm<1.0.0
+langchain
+langchain-openai
+pandas
+python-dotenv

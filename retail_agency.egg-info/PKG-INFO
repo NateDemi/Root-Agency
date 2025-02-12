@@ -1,0 +1,11 @@
+Metadata-Version: 2.2
+Name: retail-agency
+Version: 0.1
+Requires-Python: >=3.9
+Requires-Dist: agency-swarm<1.0.0
+Requires-Dist: langchain
+Requires-Dist: langchain-openai
+Requires-Dist: pandas
+Requires-Dist: python-dotenv
+Dynamic: requires-dist
+Dynamic: requires-python
