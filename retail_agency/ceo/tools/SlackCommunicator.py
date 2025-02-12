@@ -1,13 +1,17 @@
+# ceo/tools/SlackCommunicator.py
 from agency_swarm.tools import BaseTool
 from pydantic import Field
 import os
 from dotenv import load_dotenv
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+import logging
 
 load_dotenv()
 
 slack_token = os.getenv("SLACK_BOT_TOKEN")
+
+logger = logging.getLogger(__name__)
 
 class SlackCommunicator(BaseTool):
     """
@@ -25,7 +29,7 @@ class SlackCommunicator(BaseTool):
         None, description="The timestamp of the parent message to create a thread (optional)"
     )
 
-    def run(self):
+    def run(self) -> dict:
         """
         Sends a message to Slack and handles any threading requirements.
         Returns the response from the Slack API.
@@ -34,22 +38,30 @@ class SlackCommunicator(BaseTool):
             client = WebClient(token=slack_token)
             
             # Prepare message payload
-            message_payload = {
+            msg_payload = {
                 "channel": self.channel_id,
-                "text": self.message,
+                "text": self.message
             }
             
-            # Add thread_ts if it's a reply
+            # Add thread_ts if provided
             if self.thread_ts:
-                message_payload["thread_ts"] = self.thread_ts
-            
+                msg_payload["thread_ts"] = self.thread_ts
+                
             # Send message
-            response = client.chat_postMessage(**message_payload)
+            response = client.chat_postMessage(**msg_payload)
             
-            return f"Message sent successfully. Timestamp: {response['ts']}"
+            return {
+                "ok": response["ok"],
+                "ts": response["ts"],
+                "channel": response["channel"]
+            }
             
         except SlackApiError as e:
-            return f"Error sending message: {str(e)}"
+            logger.error(f"Error sending message to Slack: {str(e)}")
+            return {"error": str(e)}
+        except Exception as e:
+            logger.error(f"Unexpected error: {str(e)}")
+            return {"error": str(e)}
 
 if __name__ == "__main__":
     # Test the tool

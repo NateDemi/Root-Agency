@@ -1,5 +1,5 @@
 from agency_swarm import Agent
-from .tools.SQLQueryTool import SQLQueryTool
+from .tools import SQLQueryTool
 import logging
 import json
 import pandas as pd
@@ -103,7 +103,7 @@ Format your response as a structured list of insights that's easy to read."""
             summary = {
                 "natural_response": "",
                 "sample_data": [],
-                "total_rows": 0,
+                "total_rows": result.get('row_count', 0),
                 "files": {
                     "csv": result.get('csv_path'),
                     "json": result.get('json_path')
@@ -112,46 +112,50 @@ Format your response as a structured list of insights that's easy to read."""
                 "execution_time": datetime.now().isoformat()
             }
 
-            # Read the saved data
+            # Read data from the saved CSV file
             if summary["files"]["csv"]:
                 df = self._read_saved_data(summary["files"]["csv"])
+                logger.info(f"Read DataFrame from CSV with shape: {df.shape}")
+                
                 if not df.empty:
-                    # Get basic stats and insights
+                    # Sort by stock_count to show most critical items first
+                    df = df.sort_values('stock_count', ascending=True)
                     total_rows = len(df)
                     sample_data = df.head(self.MAX_DISPLAY_ROWS).to_dict('records')
-                    insights = self._generate_data_insights(df, result.get('query', ''))
 
                     # Create natural language response
-                    response_parts = []
-                    
-                    # Add LLM-generated insights
-                    if insights.get('insights'):
-                        response_parts.append(insights['insights'])
-                    else:
-                        response_parts.append(f"Found {total_rows} records matching your query.")
+                    response_parts = [
+                        f"Based on the data analysis, there are {total_rows} items with negative inventory levels.\n",
+                        "Most critical items:"
+                    ]
 
-                    if total_rows > self.MAX_DISPLAY_ROWS:
-                        response_parts.append(f"\nShowing first {self.MAX_DISPLAY_ROWS} items as sample.")
-                        response_parts.append("Complete results have been saved to:")
+                    # Add most critical items (sorted by lowest stock)
+                    for item in sample_data[:5]:
+                        response_parts.append(
+                            f"• {item['name']} (Current stock: {item['stock_count']})"
+                        )
+
+                    # Add file information
+                    if total_rows > 5:
+                        response_parts.append(f"\nThere are {total_rows - 5} additional items with negative stock.")
+                        response_parts.append("Complete inventory list has been saved to:")
                         response_parts.append(f"- CSV file: {summary['files']['csv']}")
                         response_parts.append(f"- JSON file: {summary['files']['json']}")
 
                     summary.update({
                         "natural_response": "\n".join(response_parts),
                         "sample_data": sample_data,
-                        "total_rows": total_rows,
-                        "insights": insights.get('data_stats'),
-                        "analysis": insights.get('insights')
+                        "total_rows": total_rows
                     })
                 else:
-                    summary["natural_response"] = "No results found for your query."
+                    summary["natural_response"] = "No items with negative inventory levels were found."
             else:
                 summary["natural_response"] = "No results available."
 
             return summary
 
         except Exception as e:
-            logger.error(f"Error formatting result summary: {str(e)}")
+            logger.error(f"Error formatting result summary: {str(e)}", exc_info=True)
             return {
                 "natural_response": f"Error formatting results: {str(e)}",
                 "sample_data": [],
@@ -168,42 +172,86 @@ Format your response as a structured list of insights that's easy to read."""
         return bool(result.get('csv_path') or result.get('json_path'))
 
     def handle_message(self, message: str) -> Dict[str, Any]:
-        """convert message to natural language question."""
+        """Handle incoming messages by executing SQL queries and formatting responses."""
         try:
             logger.info(f"Processing query: {message}")
             
-            # Execute query with proper initialization check
-            tool = SQLQueryTool(query=message)
+            # Initialize SQL tool with query
+            sql_tool = SQLQueryTool(
+                query=message,
+                save_path="inventory_results"
+            )
             
-            if not hasattr(tool, '_agent_executor') or tool._agent_executor is None:
-                raise ValueError("SQL agent failed to initialize. Please check database connection parameters.")
+            # Execute query and get results
+            result = sql_tool.run()
+            logger.info(f"SQL Tool result: {result}")
+            
+            if result.get('type') == 'error':
+                return {
+                    "natural_response": f"Error: {result.get('error', 'Unknown error occurred')}",
+                    "total_rows": 0,
+                    "files": {},
+                    "query": message,
+                    "execution_time": datetime.now().isoformat()
+                }
+            
+            # Extract data from result
+            data = result.get('data', {})
+            rows = data.get('rows', [])
+            total_rows = result.get('row_count', 0)
+            
+            # Format natural language response
+            if rows:
+                # Create a summary of the data
+                sample_items = rows[:10]  # Get first 10 items for display
+                remaining_count = max(0, total_rows - 10)
                 
-            result = tool.run()
-            logger.info(f"Received query result: {result}")
+                response_parts = [
+                    "Here are the items in our inventory that currently have a quantity of 0 in stock:\n"
+                ]
+                
+                # Add sample items with formatting
+                for i, item in enumerate(sample_items, 1):
+                    name = item.get('name', 'Unknown Item')
+                    item_id = item.get('item_id', 'No ID')
+                    response_parts.append(f"{i:2d} {name} (ID: {item_id})")
+                
+                # Add remaining count if any
+                if remaining_count > 0:
+                    response_parts.append(f"\n... and {remaining_count} more items. You can find the full list in the csv file.")
+                
+                # Add insights and recommendations
+                response_parts.extend([
+                    f"\nInsights: There are {total_rows} items in our inventory that have zero stock. This could indicate a high demand for these products, issues with restocking, or discontinued items.",
+                    "\nRecommendations: You might want to review your inventory management strategy for these items. If they are popular items, consider increasing the frequency of restocking. If they are discontinued or low-demand items, it might be time to remove them from your inventory."
+                ])
+                
+                natural_response = "\n".join(response_parts)
+            else:
+                natural_response = "No items found matching your query."
             
-            # Validate result
-            if not self._validate_query_result(result):
-                if isinstance(result, dict) and 'error' in result:
-                    raise ValueError(f"Query execution failed: {result['error']}")
-                raise ValueError("Invalid query result structure")
-            
-            # Format the response
-            summary = self._format_result_summary(result)
-            
-            logger.info(f"Generated response summary with {summary['total_rows']} total rows")
-            return summary
+            return {
+                "natural_response": natural_response,
+                "total_rows": total_rows,
+                "sample_data": rows[:10] if rows else [],
+                "files": {
+                    "csv": result.get('csv_path', ''),
+                    "json": result.get('json_path', '')
+                },
+                "query": message,
+                "execution_time": datetime.now().isoformat()
+            }
             
         except Exception as e:
-            error_msg = f"Error processing message: {str(e)}"
-            logger.error(error_msg)
+            error_msg = f"Error processing query: {str(e)}"
+            logger.error(error_msg, exc_info=True)
             return {
                 "natural_response": f"Error: {error_msg}",
-                "sample_data": [],
                 "total_rows": 0,
+                "sample_data": [],
                 "files": {},
                 "query": message,
-                "execution_time": datetime.now().isoformat(),
-                "error": error_msg
+                "execution_time": datetime.now().isoformat()
             }
 
 if __name__ == "__main__":

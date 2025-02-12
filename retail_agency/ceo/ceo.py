@@ -24,7 +24,7 @@ class CEO(Agent):
             max_prompt_tokens=25000
         )
     
-    def  response(self, response):
+    def handle_response(self, response):
         """Process responses from other agents before relaying to user."""
         try:
             if isinstance(response, dict):

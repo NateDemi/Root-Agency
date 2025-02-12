@@ -32,13 +32,15 @@ Your final response MUST be valid JSON in the following format:
 {{
     "question": "<the original question asked>",
     "sql_query": "<the SQL query you generated and executed>",
+    "columns": ["column1", "column2", ...],  # List all column names in order from your SELECT statement
     "sql_result": <the exact results returned by sql_db_query>
 }}
 
-For example, if sql_db_query returns "[('John', 100), ('Mary', 200)]", your response should include that exact output:
+For example, if sql_db_query returns "[('John', 100), ('Mary', 200)]", your response should be:
 {{
     "question": "Who are our top customers?",
     "sql_query": "SELECT name, total_spent FROM customers ORDER BY total_spent DESC LIMIT 2",
+    "columns": ["name", "total_spent"],
     "sql_result": [("John", 100), ("Mary", 200)]
 }}
 
@@ -46,9 +48,9 @@ If the question does not seem related to the database, return:
 {{
     "question": "<the original question>",
     "sql_query": null,
+    "columns": [],
     "sql_result": "I don't know"
-}}
-"""
+}}"""
 
 def create_structured_sql_agent(
     llm: ChatOpenAI,

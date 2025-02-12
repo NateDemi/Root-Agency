@@ -1,10 +1,13 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from dotenv import load_dotenv
 from pathlib import Path
 from agency_swarm import Agency, set_openai_key, set_openai_client
 from ceo.ceo import CEO
-from reporting_manager.reporting_manager import ReportingManager
+from retail_agency.reporting_manager.reporting_manager import ReportingManager
 import openai
-import os
 
 # Load environment variables
 load_dotenv(Path(__file__).parent / ".env")

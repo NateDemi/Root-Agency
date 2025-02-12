@@ -39,20 +39,36 @@ def get_threads_from_db(conversation_id: str) -> dict:
         return {}
 
 def save_threads_to_db(conversation_id: str, threads: dict) -> None:
-    """
-    Save threads for a specific conversation to Firestore.
-    
-    Args:
-        conversation_id: Unique identifier for the conversation (channel_id:thread_ts)
-        threads: Dictionary containing thread data
-    """
+    """Save conversation threads to Firestore."""
     try:
-        db.collection('slack-chats').document(conversation_id).set({
-            'threads': threads,
-            'updated_at': datetime.utcnow()
-        }, merge=True)
-        
-        logger.info(f"Saved threads for conversation {conversation_id}")
+        # Convert any non-string timestamps to strings
+        sanitized_threads = {}
+        for thread_ts, thread_data in threads.items():
+            sanitized_thread = {
+                'channel_id': str(thread_data.get('channel_id', '')),
+                'thread_ts': str(thread_data.get('thread_ts', '')),
+                'user_id': str(thread_data.get('user_id', '')),
+                'initial_message': str(thread_data.get('initial_message', '')),
+                'is_active': bool(thread_data.get('is_active', True)),
+                'message_count': int(thread_data.get('message_count', 0)),
+                'messages': {}
+            }
+            
+            # Sanitize messages
+            messages = thread_data.get('messages', {})
+            for msg_ts, msg_data in messages.items():
+                sanitized_thread['messages'][str(msg_ts)] = {
+                    'content': str(msg_data.get('content', '')),
+                    'user_id': str(msg_data.get('user_id', '')),
+                    'timestamp': str(msg_data.get('timestamp', '')),
+                    'created_at': msg_data.get('created_at').isoformat() if msg_data.get('created_at') else ''
+                }
+            
+            sanitized_threads[str(thread_ts)] = sanitized_thread
+            
+        # Save to Firestore
+        db.collection('slack-chats').document(conversation_id).set(sanitized_threads)
+        logger.info(f"Successfully saved threads for conversation {conversation_id}")
         
     except Exception as e:
         logger.error(f"Error saving threads to Firestore: {str(e)}")
