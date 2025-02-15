@@ -10,20 +10,26 @@ import logging
 logger = logging.getLogger(__name__)
 
 class CEO(Agent):
+    """
+    CEO Agent - Entry point for the retail assistant agency.
+    Responsible for understanding user requests and delegating to appropriate agents.
+    """
+    
     def __init__(self):
         super().__init__(
             name="CEO",
             description=(
-                "Retail Management Agency CEO responsible for client communication, "
-                "task delegation, and coordinating with specialized agents like the ReportingManager "
-                "for data analysis and insights. Processes and relays agent responses to users."
+                "I am the CEO of this retail assistant agency. "
+                "I understand your business needs and coordinate with our ReportingManager "
+                "to provide you with accurate data and insights about your inventory and sales. "
+                "I ensure you get the information you need in the format that works best for you."
             ),
             instructions="./instructions.md",
-            tools=[SlackCommunicator, TaskManager, GetDate, NotionPoster],
+            tools=[],  # CEO doesn't need tools as it delegates to ReportingManager
             temperature=0.5,
-            max_prompt_tokens=25000
+            model="gpt-4"
         )
-    
+
     def handle_response(self, response):
         """Process responses from other agents before relaying to user."""
         try:
@@ -53,3 +59,8 @@ class CEO(Agent):
         except Exception as e:
             logger.error(f"Error processing agent response: {str(e)}")
             return str(response)
+
+if __name__ == "__main__":
+    # Test the CEO agent
+    ceo = CEO()
+    print("CEO agent initialized successfully")

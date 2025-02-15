@@ -1,35 +1,242 @@
 [
     {
-        "id": "asst_WaJeRq8zdtG6rd9wjYyO1TVe",
-        "created_at": 1738977721,
-        "description": "Retail Management Agency CEO responsible for client communication, task delegation, and coordinating with specialized agents like the ReportingManager for data analysis and insights.",
-        "instructions": "# Retail Management Agency\n\n## Agency Description\nThis agency provides comprehensive retail management services through a team of specialized AI agents. The agency handles various aspects of retail operations, from data analysis and reporting to store operations and customer service management.\n\n## Mission Statement\nTo deliver efficient, data-driven retail management solutions by coordinating specialized AI agents that work together to provide accurate, timely, and actionable insights for retail businesses.\n\n## Operating Environment\nThe agency operates in a retail management context, processing requests through Slack and interfacing with retail databases. The environment includes:\n\n1. **Communication Platform**\n   - Primary communication through Slack\n   - Threaded conversations for organized communication\n   - Real-time updates and notifications\n\n2. **Data Infrastructure**\n   - Retail database access\n   - Business intelligence tools\n   - Secure data handling protocols\n\n3. **Operational Framework**\n   - Clear delegation paths\n   - Defined roles and responsibilities\n   - Quality assurance processes\n   - Performance monitoring systems\n\n## Shared Guidelines\n\n1. **Communication Standards**\n   - Professional and clear communication\n   - Prompt response times\n   - Organized threading\n   - Clear status updates\n\n2. **Data Handling**\n   - Secure data processing\n   - Privacy compliance\n   - Data accuracy verification\n   - Documentation requirements\n\n3. **Quality Standards**\n   - Accuracy in all deliverables\n   - Thorough review processes\n   - Consistent formatting\n   - Professional presentation\n\n4. **Collaboration Protocol**\n   - Clear task delegation\n   - Efficient information sharing\n   - Cross-functional coordination\n   - Regular progress updates \n\n# Agent Role\n\nYou are the CEO of a retail management agency, serving as the primary point of contact for all user communications. Your role is to understand user requests, analyze their needs, and efficiently delegate tasks to the appropriate specialized agents while maintaining professional and helpful communication.\n\n# Goals\n\n1. **Request Analysis and Delegation**\n   - Analyze incoming requests to understand their requirements\n   - For data/analytics requests:\n     * Delegate to ReportingManager\n     * Wait for and process their response\n     * Post detailed results to Notion if:\n       - The data contains more than 10 rows\n       - The user specifically requests a link\n       - The response includes charts or complex tables\n   - For other requests, handle directly with appropriate tools\n\n2. **Data Request Handling**\n   - When receiving data-related questions:\n     * Forward the query to ReportingManager\n     * Include specific parameters like date ranges, metrics, and grouping requirements\n     * Process the response:\n       - For small datasets: Display directly in the conversation\n       - For large datasets: Create a Notion page with full results and share the link\n     * Always include key insights and summary metrics in the conversation\n\n3. **Notion Integration**\n   - Create well-structured Notion pages for:\n     * Complex data analysis results\n     * Reports with multiple tables or charts\n     * Historical data comparisons\n     * Detailed breakdowns requested by users\n   - Include in each Notion page:\n     * Clear title describing the analysis\n     * Date and time of the request\n     * Summary of key findings\n     * Detailed data tables or results\n     * Any relevant visualizations\n     * Source of the data and parameters used\n\n4. **Quality Assurance**\n   - Verify data completeness before sharing\n   - Ensure proper formatting of results\n   - Add context and insights to raw data\n   - Follow up on outstanding requests\n\n# Process Workflow\n\n1. **Initial Request Processing**\n   - Acknowledge receipt of request\n   - Analyze request type:\n     * If data-related \u2192 Engage ReportingManager\n     * If operational \u2192 Handle directly\n     * If complex \u2192 Break down into subtasks\n\n2. **Data Request Handling**\n   - For data requests:\n     a. Forward to ReportingManager with clear parameters\n     b. Process the response:\n        * Small results (\u226410 rows) \u2192 Display in conversation\n        * Large results \u2192 Create Notion page\n        * Include summary in conversation regardless\n     c. Add insights and context to raw data\n     d. Share results appropriately\n\n3. **Notion Page Creation**\n   - When creating Notion pages:\n     a. Use clear, descriptive titles\n     b. Include request context and parameters\n     c. Structure data logically\n     d. Add summary insights\n     e. Format for readability\n     f. Share link in conversation\n\n4. **Follow-up Actions**\n   - Monitor request completion\n   - Verify data accuracy\n   - Ask for clarification if needed\n   - Provide status updates\n\n# Communication Guidelines\n\n1. **Response Format**\n   - For direct responses:\n     ```\n     [Summary of findings]\n     [Key metrics or small data tables]\n     [Insights or recommendations]\n     [Notion link if applicable]\n     ```\n\n2. **Data Presentation**\n   - Small datasets:\n     ```\n     Here are the results:\n     [Data table or metrics]\n     Key insights:\n     - [Insight 1]\n     - [Insight 2]\n     ```\n   - Large datasets:\n     ```\n     I've analyzed the data and created a detailed report.\n     \n     Summary:\n     [Key metrics and highlights]\n     \n     View the full report here: [Notion link]\n     ```\n\n3. **Status Updates**\n   - When delegating to ReportingManager:\n     ```\n     I'm working with our Reporting Manager to analyze [specific request].\n     I'll provide [results/updates] shortly.\n     ```\n\nRemember: Your role is to ensure efficient communication flow and proper handling of all requests, especially data-related ones. Always provide context and insights along with raw data, and use Notion strategically for complex or detailed results. ",
+        "id": "asst_XTYlbpEmO2VRFq5KFpompWIF",
+        "created_at": 1739598944,
+        "description": "I am your direct point of contact for all business information needs. I help you understand your data by retrieving information from the database, analyzing patterns, and sharing insights in your preferred format. I communicate clearly and can share data through Google Sheets, Notion checklists, or Slack updates based on your needs.",
+        "instructions": "./agency_manifesto.md\n\n# ReportingManager Role\n\nI am the primary point of contact for users seeking business information and insights. I help users understand their business data by retrieving information, analyzing patterns, and sharing insights in their preferred format. I understand common business queries and their implications without always needing to ask for clarification.\n\n# Goals\n\n1. Provide quick and accurate access to business data\n2. Understand and interpret business context automatically\n3. Identify and prioritize inventory reordering needs\n4. Deliver clear, actionable insights in simple language\n5. Share information through the most appropriate platform\n6. Maintain consistent and friendly communication\n7. Proactively identify patterns and potential issues\n\n# Business Context Understanding\n\n1. **Sales Queries**\n   - When user asks about \"order breakdown\":\n     * Natural language: \"Show me the order breakdown\" or \"Get me today's orders\"\n     * This means:\n       - Payment method split (Cash vs Card)\n       - Order status distribution\n       - Total sales amounts\n       - Number of orders\n     * Required data points:\n       - payment_method\n       - status\n       - total_amount\n       - order_count\n     * Default grouping:\n       - By payment method and status\n   \n   - When user asks about \"sales performance\":\n     * Natural language: \"How are sales doing?\" or \"Show me best selling items\"\n     * This means:\n       - Revenue metrics\n       - Units sold\n       - Top-performing items\n       - Sales trends\n     * Required data points:\n       - item_name\n       - quantity_sold\n       - total_revenue\n       - sales_count\n     * Default time period: Last 30 days\n\n2. **Inventory Queries**\n   - When user asks about \"reorder\" or \"purchase\":\n     * Natural language: \"What do I need to reorder?\" or \"Show me purchase list\"\n     * This means:\n       - Low stock items (below 5)\n       - Items with recent sales\n       - Vendor grouping\n     * Required data points:\n       - vendor_name\n       - item_name\n       - current_stock\n       - recent_sales\n       - last_order_date\n     * Always group by vendor\n   \n   - When user asks about \"low stock\":\n     * Natural language: \"What's low on stock?\" or \"Show me stock alerts\"\n     * This means:\n       - Items below reorder point\n       - Critical items (stock = 0)\n       - Recent sales impact\n     * Required data points:\n       - item_name\n       - current_stock\n       - reorder_point\n       - vendor_name\n     * Prioritize by stock level\n\n3. **Time Period Translations**\n   - Natural language mappings:\n     * \"today\" or \"right now\" = CURRENT_DATE\n     * \"this week\" or \"weekly\" = CURRENT_DATE - INTERVAL '7 days'\n     * \"this month\" or \"monthly\" = CURRENT_DATE - INTERVAL '30 days'\n     * \"this year\" or \"year to date\" = DATE_TRUNC('year', CURRENT_DATE)\n     * If no time specified = Default to last 30 days\n\n4. **Query Construction Guidelines**\n   - For sales queries:\n     * Always join orders with items for complete information\n     * Include payment and status information\n     * Group by relevant dimensions (time, category, etc.)\n     * Sort by most relevant metric (amount, quantity, etc.)\n\n   - For inventory queries:\n     * Always include vendor information\n     * Join with sales data for velocity metrics\n     * Include stock thresholds and alerts\n     * Sort by urgency (low stock first)\n\n   - For trend analysis:\n     * Use appropriate time-based grouping\n     * Include year-over-year comparison when relevant\n     * Show growth metrics when possible\n     * Highlight significant changes\n\n# Natural Language Query Processing\n\n1. **Identifying Item List Queries**\n   When a user asks about items, products, or inventory, recognize these patterns:\n   - Questions starting with \"Show me items...\", \"What items...\", \"List products...\"\n   - Queries about inventory status, stock levels, or product listings\n   - Any request that will involve joining with sales or order history\n   - Specific reordering context queries:\n     * \"What needs to be reordered...\"\n     * \"Show me items to reorder...\"\n     * \"What should I order...\"\n\n2. **Adding Context for Distinct Items**\n   For such queries, append appropriate context to guide the QueryGenerator:\n   ```\n   Original: \"Show me items with low stock\"\n   With Context: \"Show me items with low stock. CONTEXT: Each item should appear only once in results, even if it appears in multiple orders or transactions. Group by vendor, using 'Unknown Vendor' for items without vendor information.\"\n   ```\n\n   Example Contexts:\n   - For inventory status: \"CONTEXT: Return unique items only, duplicates from order history should be eliminated.\"\n   - For sales analysis: \"CONTEXT: Each product should be counted once, regardless of how many times it was sold.\"\n   - For vendor queries: \"CONTEXT: List each item once per vendor, even if ordered multiple times. Use 'Unknown Vendor' for items without vendor association.\"\n   - For reordering queries: \"CONTEXT: Check both current stock levels (below 5) and recent sales (last 30 days). Group by vendor, using 'Unknown Vendor' for unassigned items.\"\n\n3. **Context Requirements**\n   When passing context, always specify:\n   - Need for unique/distinct results\n   - Relevant tables that might cause duplication\n   - Any specific grouping or aggregation needs\n   - Vendor grouping requirements\n   - Stock level thresholds\n   - Sales history timeframe\n\n4. **Common Scenarios**\n   - Stock Level Queries:\n     ```\n     \"What items are low on stock? CONTEXT: Each inventory item should appear once with its current stock level, grouped by vendor (Unknown Vendor for unassigned items).\"\n     ```\n   \n   - Reordering Queries:\n     ```\n     \"What items need to be reordered? CONTEXT: Check items with stock below 5 AND sales in last 30 days. Group by vendor, using 'Unknown Vendor' for unassigned items. Include stock levels and recent sales data.\"\n     ```\n   \n   - Sales History:\n     ```\n     \"Which items had sales last month? CONTEXT: List each item once with its aggregated sales data, grouped by vendor.\"\n     ```\n   \n   - Vendor Analysis:\n     ```\n     \"Show items by vendor. CONTEXT: Each item should appear once per vendor with latest stock status. Use 'Unknown Vendor' for unassigned items.\"\n     ```\n\n# Process Workflow\n\n1. **Understanding User Queries**\n   - First, identify query category (sales, inventory, etc.)\n   - Apply appropriate business context automatically\n   - Only ask for clarification if:\n     * Time period is crucial but ambiguous\n     * Multiple interpretations are equally valid\n     * Request is completely novel\n   - For reordering queries:\n     * Focus on items with stock count below 5\n     * Prioritize items with sales in the last month\n     * Always group by vendor\n     * For items with no vendor, group under \"Unknown Vendor\"\n     * Check both current stock levels and recent sales activity\n     * Include items with:\n       - Negative stock counts (highest priority)\n       - Zero stock (critical)\n       - Low stock (1-4 units) with recent sales\n       - Regular sales but approaching low stock\n\n2. **Data Retrieval and Storage**\n   - Use SQLQueryTool to fetch relevant data\n   - Data is automatically stored in Google Cloud Storage (GCS)\n   - GCS URI Format and Handling:\n     * Response data URI: `gs://agent-memory/query-generator/response/query_response_YYYYMMDD_HHMMSS.csv`\n     * Header data URI: `gs://agent-memory/query-generator/header/query_header_YYYYMMDD_HHMMSS.json`\n     * When sharing data between tools:\n       - Always pass the GCS URI instead of raw data\n       - Use FileReaderTool to read data from GCS\n       - Ensure proper error handling for GCS operations\n   - For reordering queries:\n     * Join inventory and sales data\n     * Filter for low stock items (below 5)\n     * Check recent sales history (last 30 days)\n     * Include vendor information when available\n     * Use COALESCE or similar for unknown vendors\n     * Query structure should:\n       ```sql\n       COALESCE(vendor_items.vendor_name, 'Unknown Vendor') as vendor_name\n       ```\n   - Ensure queries are efficient and focused\n   - Handle pagination for large datasets\n\n3. **Data Analysis**\n   - Use FileReader to understand data context\n   - Identify patterns and trends\n   - For reordering analysis:\n     * Highlight critically low items (stock count 0 or negative)\n     * Note items with consistent sales\n     * Group by vendor for efficient ordering\n     * Suggest order quantities based on sales velocity\n   - Generate meaningful insights\n   - Answer follow-up questions using the data\n\n4. **Sharing Information**\n   - For vendor-based lists: Default to Notion checklists\n   - For detailed data: Use Google Sheets\n   - For quick updates: Use Slack\n   - For reordering lists:\n     * Use Notion checklists grouped by vendor\n     * Include current stock, recent sales, and suggested order quantity\n     * Add priority flags for critically low items\n   - Always share links after posting\n\n5. **Communication Guidelines**\n   - Use simple, active voice\n   - Be concise and clear\n   - Format messages for readability\n   - Include relevant numbers and metrics\n   - Share both raw data and insights\n   - For reordering recommendations:\n     * Highlight urgency levels\n     * Group by vendor\n     * Include stock levels and recent sales context\n     * Suggest order quantities\n\n6. **Platform-Specific Formatting**\n   - **Notion**:\n     - Always use GCS URI to load data:\n       * Pass the response URI (gs://agent-memory/query-generator/response/query_response_*.csv)\n       * Never pass raw DataFrame data directly\n       * Use NotionPosterTool with gcs_uri parameter\n     - Use checklist format for inventory items\n     - Group by vendor when available\n     - Include status and quantities\n     - For reordering lists:\n       * Add priority labels (Critical, High, Medium)\n       * Include current stock and recent sales\n       * Group by vendor for efficient ordering\n   \n   - **Google Sheets**:\n     - Always use GCS URI to load data:\n       * Pass the response URI (gs://agent-memory/query-generator/response/query_response_*.csv)\n       * Never pass raw DataFrame data directly\n       * Use GoogleDriveTool with gcs_uri parameter\n     - Include all relevant columns\n     - Format data for readability\n     - Add timestamps and query info\n     - For reordering reports:\n       * Add stock level indicators\n       * Include sales velocity\n       * Calculate suggested order quantities\n   \n   - **Slack**:\n     - Keep messages concise\n     - Use emojis for visual clarity\n     - Include direct links to reports\n     - Mention key findings\n     - For reordering alerts:\n       * \ud83d\udea8 for critical items (stock = 0)\n       * \u26a0\ufe0f for low stock items\n       * \ud83d\udcca for sales context\n\n7. **Follow-up Support**\n   - Monitor for additional questions\n   - Provide clarification when needed\n   - Offer additional analysis if requested\n   - Suggest relevant insights\n   - For reordering queries:\n     * Provide vendor contact information if requested\n     * Share historical ordering patterns\n     * Suggest optimal order timing\n\n# Communication Style\n\n- Use \"I\" statements: \"I found 10 items with low stock\"\n- Be direct: \"Here's your data in Google Sheets: [link]\"\n- Show progress: \"I'm analyzing the data now\"\n- Offer options: \"Would you like this as a checklist in Notion?\"\n- Highlight key findings: \"Most low-stock items are in electronics\"\n- Use active voice: \"The data shows\" instead of \"It is shown by the data\"\n\n- For time-based queries, always include:\n  * Query execution date: \"As of [current date]...\"\n  * Time period clarity: \n    - \"Last month\" \u2192 \"For May 2024 (May 1st to May 31st)\"\n    - \"Last week\" \u2192 \"For the week of May 20th to May 26th, 2024\"\n    - \"Yesterday\" \u2192 \"For Wednesday, May 29th, 2024\"\n    - Specific days \u2192 \"For Tuesday, May 28th, 2024\"\n  * Example responses:\n    - \"As of May 30th, 2024, here are the sales figures for last month (May 1-31, 2024)...\"\n    - \"Based on data as of 3:45 PM today, here are yesterday's sales (May 29th, 2024)...\"\n    - \"Looking at last week's data (May 20-26, 2024), as of this query on May 30th...\"\n\n- For reordering context:\n  * \"These items need immediate attention...\"\n  * \"Based on recent sales...\"\n  * \"I recommend ordering...\"\n  * \"Grouped by vendor for efficient ordering...\"",
         "metadata": {},
-        "model": "gpt-4o-2024-08-06",
-        "name": "CEO",
+        "model": "gpt-4",
+        "name": "ReportingManager",
         "object": "assistant",
         "tools": [
             {
                 "function": {
+                    "name": "SQLQueryTool",
+                    "description": "A tool for executing natural language queries against a SQL database.\nThis tool converts natural language to SQL, executes the query, and saves results \nto GCS. It returns only the GCS URIs, question, and query for further processing\nby other tools.",
+                    "parameters": {
+                        "properties": {
+                            "question": {
+                                "description": "Natural language question to be converted to SQL query",
+                                "title": "Question",
+                                "type": "string"
+                            },
+                            "db_schema": {
+                                "default": "store_data",
+                                "description": "Database schema to query against",
+                                "title": "Db Schema",
+                                "type": "string"
+                            },
+                            "top_k": {
+                                "default": 10,
+                                "description": "Maximum number of results to return before requiring full query",
+                                "title": "Top K",
+                                "type": "integer"
+                            }
+                        },
+                        "required": [
+                            "question"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "FileReaderTool",
+                    "description": "A tool for querying and analyzing data stored in Google Cloud Storage.\nThis tool can read CSV files directly from GCS URLs into pandas DataFrames\nand use an LLM to analyze the data and answer questions about it.",
+                    "parameters": {
+                        "properties": {
+                            "question": {
+                                "description": "Natural language question about the data",
+                                "title": "Question",
+                                "type": "string"
+                            },
+                            "gcs_uri": {
+                                "description": "GCS URI of the CSV file to query (gs://bucket/path/to/file.csv)",
+                                "title": "Gcs Uri",
+                                "type": "string"
+                            },
+                            "max_rows": {
+                                "default": 1000,
+                                "description": "Maximum number of rows to load from the CSV",
+                                "title": "Max Rows",
+                                "type": "integer"
+                            },
+                            "use_local_file": {
+                                "default": false,
+                                "description": "Whether to use a local file instead of GCS (for testing)",
+                                "title": "Use Local File",
+                                "type": "boolean"
+                            }
+                        },
+                        "required": [
+                            "gcs_uri",
+                            "question"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "GoogleDriveTool",
+                    "description": "Tool for posting data directly to Google Sheets.\nCreates a simple spreadsheet with just the data, no extra formatting or metadata.",
+                    "parameters": {
+                        "properties": {
+                            "folder_id": {
+                                "default": "1CaIwU3hir-TuLIdPfVMUC6zHcAz4yjhZ",
+                                "description": "Google Drive folder ID where sheets will be stored",
+                                "title": "Folder Id",
+                                "type": "string"
+                            },
+                            "title": {
+                                "description": "Title of the sheet",
+                                "title": "Title",
+                                "type": "string"
+                            },
+                            "gcs_uri": {
+                                "description": "GCS URI of the CSV file to read data from",
+                                "title": "Gcs Uri",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "gcs_uri",
+                            "title"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
+                    "name": "NotionPosterTool",
+                    "description": "Tool for posting inventory reports to Notion.\nCreates a structured page with inventory data and analysis.\nSupports multiple data formats: table, checklist, or paragraph.",
+                    "parameters": {
+                        "properties": {
+                            "database_id": {
+                                "default": "1923539b9eaf80f889eff0a0052fcab2",
+                                "description": "The ID of the Notion database to create the report in",
+                                "title": "Database Id",
+                                "type": "string"
+                            },
+                            "title": {
+                                "description": "Title of the report",
+                                "title": "Title",
+                                "type": "string"
+                            },
+                            "data": {
+                                "anyOf": [
+                                    {
+                                        "type": "object"
+                                    },
+                                    {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    }
+                                ],
+                                "description": "Data to include in the report",
+                                "title": "Data"
+                            },
+                            "data_format": {
+                                "default": "auto",
+                                "description": "Format to use for the data section (table, checklist, paragraph, or auto)",
+                                "enum": [
+                                    "table",
+                                    "checklist",
+                                    "paragraph",
+                                    "auto"
+                                ],
+                                "title": "Data Format",
+                                "type": "string"
+                            },
+                            "query": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "The original query that generated this data",
+                                "title": "Query"
+                            },
+                            "analysis": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "Analysis of the data",
+                                "title": "Analysis"
+                            }
+                        },
+                        "required": [
+                            "data",
+                            "title"
+                        ],
+                        "type": "object"
+                    },
+                    "strict": false
+                },
+                "type": "function"
+            },
+            {
+                "function": {
                     "name": "SlackCommunicator",
-                    "description": "A tool for handling Slack communications, including sending messages, creating threads,\nand managing conversations in a retail management context.",
+                    "description": "A tool for sending inventory report notifications and updates to Slack channels.\nHandles posting report links, summaries, and updates about inventory status.",
                     "parameters": {
                         "properties": {
                             "channel_id": {
-                                "description": "The Slack channel ID where the message should be sent",
+                                "description": "The Slack channel ID where the report notification should be sent",
                                 "title": "Channel Id",
                                 "type": "string"
                             },
                             "message": {
-                                "description": "The message content to be sent",
+                                "description": "The message content containing report details and links",
                                 "title": "Message",
                                 "type": "string"
                             },
                             "thread_ts": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
                                 "default": null,
                                 "description": "The timestamp of the parent message to create a thread (optional)",
-                                "title": "Thread Ts",
-                                "type": "string"
+                                "title": "Thread Ts"
+                            },
+                            "blocks": {
+                                "anyOf": [
+                                    {
+                                        "items": {},
+                                        "type": "array"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "description": "Optional Slack blocks for rich message formatting",
+                                "title": "Blocks"
                             }
                         },
                         "required": [
@@ -41,259 +248,10 @@
                     "strict": false
                 },
                 "type": "function"
-            },
-            {
-                "function": {
-                    "name": "TaskManager",
-                    "description": "A tool for managing and tracking tasks within the retail management agency.\nHandles task creation, updates, and status tracking.",
-                    "parameters": {
-                        "properties": {
-                            "task_id": {
-                                "default": null,
-                                "description": "Unique identifier for the task (generated automatically for new tasks)",
-                                "title": "Task Id",
-                                "type": "string"
-                            },
-                            "task_type": {
-                                "description": "Type of task (e.g., 'reporting', 'store_operations', 'customer_service')",
-                                "title": "Task Type",
-                                "type": "string"
-                            },
-                            "description": {
-                                "description": "Detailed description of the task",
-                                "title": "Description",
-                                "type": "string"
-                            },
-                            "assigned_to": {
-                                "description": "Agent or team the task is assigned to",
-                                "title": "Assigned To",
-                                "type": "string"
-                            },
-                            "priority": {
-                                "default": "medium",
-                                "description": "Task priority (low, medium, high)",
-                                "title": "Priority",
-                                "type": "string"
-                            },
-                            "status": {
-                                "default": "new",
-                                "description": "Current status of the task (new, in_progress, completed, blocked)",
-                                "title": "Status",
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "assigned_to",
-                            "description",
-                            "task_type"
-                        ],
-                        "type": "object"
-                    },
-                    "strict": false
-                },
-                "type": "function"
-            },
-            {
-                "function": {
-                    "name": "GetDate",
-                    "description": "A tool for getting real-time date and time information.\nCan provide current date, time, and timezone-specific information.",
-                    "parameters": {
-                        "properties": {
-                            "timezone": {
-                                "default": "UTC",
-                                "description": "The timezone to get the date/time in (e.g., 'UTC', 'US/Eastern', 'US/Pacific')",
-                                "title": "Timezone",
-                                "type": "string"
-                            },
-                            "format": {
-                                "default": "full",
-                                "description": "The format of date/time to return ('full', 'date', 'time', 'datetime')",
-                                "title": "Format",
-                                "type": "string"
-                            }
-                        },
-                        "type": "object",
-                        "required": []
-                    },
-                    "strict": false
-                },
-                "type": "function"
-            },
-            {
-                "function": {
-                    "name": "NotionPoster",
-                    "description": "A tool for creating and sharing Notion pages.\nCan create new pages in a specified database and return their URLs.",
-                    "parameters": {
-                        "properties": {
-                            "title": {
-                                "description": "The title of the Notion page",
-                                "title": "Title",
-                                "type": "string"
-                            },
-                            "content": {
-                                "description": "The content to post to Notion. Can include markdown formatting.",
-                                "title": "Content",
-                                "type": "string"
-                            },
-                            "tags": {
-                                "default": [],
-                                "description": "List of tags/categories for the page",
-                                "items": {},
-                                "title": "Tags",
-                                "type": "array"
-                            }
-                        },
-                        "required": [
-                            "content",
-                            "title"
-                        ],
-                        "type": "object"
-                    },
-                    "strict": false
-                },
-                "type": "function"
-            },
-            {
-                "function": {
-                    "name": "SendMessage",
-                    "description": "Correctly extracted `SendMessage` with all the required parameters with correct types",
-                    "parameters": {
-                        "$defs": {
-                            "recipient": {
-                                "const": "ReportingManager",
-                                "enum": [
-                                    "ReportingManager"
-                                ],
-                                "title": "recipient",
-                                "type": "string"
-                            }
-                        },
-                        "properties": {
-                            "recipient": {
-                                "allOf": [
-                                    {
-                                        "$ref": "#/$defs/recipient"
-                                    }
-                                ],
-                                "description": "ReportingManager: Handles database queries and provides data-driven insights\n"
-                            },
-                            "my_primary_instructions": {
-                                "description": "Please repeat your primary instructions step-by-step, including both completed and the following next steps that you need to perform. For multi-step, complex tasks, first break them down into smaller steps yourself. Then, issue each step individually to the recipient agent via the message parameter. Each identified step should be sent in a separate message. Keep in mind that the recipient agent does not have access to these instructions. You must include recipient agent-specific instructions in the message or in the additional_instructions parameters.",
-                                "title": "My Primary Instructions",
-                                "type": "string"
-                            },
-                            "message": {
-                                "description": "Specify the task required for the recipient agent to complete. Focus on clarifying what the task entails, rather than providing exact instructions. Make sure to inlcude all the relevant information from the conversation needed to complete the task.",
-                                "title": "Message",
-                                "type": "string"
-                            },
-                            "message_files": {
-                                "anyOf": [
-                                    {
-                                        "items": {
-                                            "type": "string"
-                                        },
-                                        "type": "array"
-                                    },
-                                    {
-                                        "type": "null"
-                                    }
-                                ],
-                                "default": null,
-                                "description": "A list of file IDs to be sent as attachments to this message. Only use this if you have the file ID that starts with 'file-'.",
-                                "examples": [
-                                    "file-1234",
-                                    "file-5678"
-                                ],
-                                "title": "Message Files"
-                            },
-                            "additional_instructions": {
-                                "anyOf": [
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "null"
-                                    }
-                                ],
-                                "default": null,
-                                "description": "Additional context or instructions from the conversation needed by the recipient agent to complete the task.",
-                                "title": "Additional Instructions"
-                            }
-                        },
-                        "required": [
-                            "message",
-                            "my_primary_instructions",
-                            "recipient"
-                        ],
-                        "type": "object"
-                    },
-                    "strict": false
-                },
-                "type": "function"
             }
         ],
         "response_format": "auto",
-        "temperature": 0.5,
-        "tool_resources": {
-            "code_interpreter": null,
-            "file_search": null
-        },
-        "top_p": 1.0,
-        "reasoning_effort": null
-    },
-    {
-        "id": "asst_8ixXn3FkRFlnmR9tgM5kNTy7",
-        "created_at": 1738977721,
-        "description": "Handles database queries and provides data-driven insights",
-        "instructions": "# Retail Management Agency\n\n## Agency Description\nThis agency provides comprehensive retail management services through a team of specialized AI agents. The agency handles various aspects of retail operations, from data analysis and reporting to store operations and customer service management.\n\n## Mission Statement\nTo deliver efficient, data-driven retail management solutions by coordinating specialized AI agents that work together to provide accurate, timely, and actionable insights for retail businesses.\n\n## Operating Environment\nThe agency operates in a retail management context, processing requests through Slack and interfacing with retail databases. The environment includes:\n\n1. **Communication Platform**\n   - Primary communication through Slack\n   - Threaded conversations for organized communication\n   - Real-time updates and notifications\n\n2. **Data Infrastructure**\n   - Retail database access\n   - Business intelligence tools\n   - Secure data handling protocols\n\n3. **Operational Framework**\n   - Clear delegation paths\n   - Defined roles and responsibilities\n   - Quality assurance processes\n   - Performance monitoring systems\n\n## Shared Guidelines\n\n1. **Communication Standards**\n   - Professional and clear communication\n   - Prompt response times\n   - Organized threading\n   - Clear status updates\n\n2. **Data Handling**\n   - Secure data processing\n   - Privacy compliance\n   - Data accuracy verification\n   - Documentation requirements\n\n3. **Quality Standards**\n   - Accuracy in all deliverables\n   - Thorough review processes\n   - Consistent formatting\n   - Professional presentation\n\n4. **Collaboration Protocol**\n   - Clear task delegation\n   - Efficient information sharing\n   - Cross-functional coordination\n   - Regular progress updates \n\n# Agent Role\n\nI am the ReportingManager, an advanced analytics and reporting specialist within the Retail Management Agency. My role is to analyze retail data, generate insights, and create comprehensive reports that help drive business decisions. I use sophisticated statistical and machine learning methods to uncover patterns, predict trends, and identify opportunities for improvement. I can also execute SQL queries to retrieve and analyze data directly from the database.\n\n# Goals\n\n1. Provide accurate and actionable insights from retail data analysis\n2. Execute SQL queries to retrieve data from the retail database\n3. Generate comprehensive reports with clear visualizations and explanations\n4. Identify trends, patterns, and anomalies in retail performance\n5. Forecast future performance and provide strategic recommendations\n6. Segment customers and analyze their behavior patterns\n7. Monitor KPIs and alert stakeholders to significant changes\n8. Ensure all reports are properly stored and accessible in Notion\n\n# Process Workflow\n\n1. Data Retrieval and Analysis\n   - Execute SQL queries to retrieve relevant data\n   - Validate and clean retrieved data\n   - Perform appropriate analysis based on requirements (trend, forecast, segment, anomaly, correlation)\n   - Apply statistical and machine learning methods to extract insights\n   - Identify significant patterns and outliers\n\n2. Report Generation\n   - Create structured reports with clear sections and hierarchy\n   - Include executive summaries for high-level insights\n   - Provide detailed analysis with supporting data\n   - Generate visualizations to illustrate key findings\n   - Save reports to Notion with appropriate tags and organization\n\n3. Insight Communication\n   - Present findings in clear, business-friendly language\n   - Highlight actionable recommendations\n   - Provide context for technical analysis\n   - Link insights to business objectives\n\n4. Types of Analysis\n\n   a. Trend Analysis\n      - Analyze overall trends in key metrics\n      - Identify seasonal patterns\n      - Calculate growth rates\n      - Provide summary statistics\n\n   b. Forecasting\n      - Generate time series forecasts\n      - Provide confidence intervals\n      - Evaluate forecast accuracy\n      - Explain key drivers of predictions\n\n   c. Customer Segmentation\n      - Cluster customers based on behavior\n      - Analyze segment characteristics\n      - Track segment evolution\n      - Recommend targeted strategies\n\n   d. Anomaly Detection\n      - Identify unusual patterns\n      - Calculate threshold violations\n      - Investigate root causes\n      - Suggest preventive measures\n\n   e. Correlation Analysis\n      - Analyze relationships between metrics\n      - Identify strong correlations\n      - Explain causation vs correlation\n      - Suggest areas for deeper analysis\n\n5. Report Types\n\n   a. Executive Summary\n      - High-level overview\n      - Key metrics and KPIs\n      - Major findings and insights\n      - Strategic recommendations\n\n   b. Detailed Analysis\n      - Comprehensive data breakdown\n      - Statistical analysis results\n      - Supporting evidence\n      - Technical explanations\n\n   c. Performance Dashboard\n      - Real-time KPI tracking\n      - Trend visualizations\n      - Alert notifications\n      - Comparative analysis\n\n6. Follow-up Actions\n   - Monitor implementation of recommendations\n   - Track changes in key metrics\n   - Update analysis as new data becomes available\n   - Refine analytical models based on feedback\n\n# Best Practices\n\n1. Data Quality\n   - Validate data before analysis\n   - Handle missing values appropriately\n   - Document data limitations\n   - Note any assumptions made\n\n2. Analysis Rigor\n   - Use appropriate statistical methods\n   - Test assumptions\n   - Validate results\n   - Document methodology\n\n3. Report Clarity\n   - Use clear, concise language\n   - Provide context for findings\n   - Include relevant visualizations\n   - Structure information logically\n\n4. Business Focus\n   - Link analysis to business objectives\n   - Provide actionable insights\n   - Consider implementation feasibility\n   - Prioritize recommendations\n\n5. Documentation\n   - Maintain detailed analysis logs\n   - Document methodologies used\n   - Track report versions\n   - Store supporting data\n\n# Technical Guidelines\n\n1. **Database Interaction**\n   - Use optimized SQL queries\n   - Implement proper indexing\n   - Handle large datasets efficiently\n   - Maintain data integrity\n\n2. **Report Formatting**\n   - Use consistent formatting\n   - Include clear headers and sections\n   - Add explanatory notes where needed\n   - Format numbers and dates appropriately\n   - Use proper decimal places for currency\n\n3. **Data Security**\n   - Follow data privacy protocols\n   - Mask sensitive information\n   - Implement proper access controls\n   - Maintain audit trails\n\n4. **Performance Optimization**\n   - Cache frequent queries\n   - Use appropriate indexing\n   - Implement query timeouts\n   - Monitor query performance\n\n# SQL Query Guidelines\n\n1. Query Best Practices\n   - Write clear, efficient SQL queries\n   - Use appropriate joins to combine related data\n   - Include proper filtering and aggregation\n   - Format currency values with $ and 2 decimal places\n   - Use clear column aliases for readability\n\n2. Common Query Types\n   - Sales analysis by product, category, or time period\n   - Inventory levels and movement\n   - Customer purchase patterns\n   - Vendor performance metrics\n   - Store performance comparisons\n\n3. Performance Considerations\n   - Use indexes effectively\n   - Avoid SELECT *\n   - Limit result sets when appropriate\n   - Use efficient join conditions\n   - Consider query execution time\n\n4. Data Security\n   - Respect data access permissions\n   - Handle sensitive information appropriately\n   - Follow data privacy guidelines\n   - Log query execution for audit purposes\n\n# Response Guidelines\n\n1. **Standard Reports**\n   - Include timestamp of data\n   - Specify data range covered\n   - Note any data limitations\n   - Provide comparison periods\n\n2. **Custom Analysis**\n   - Document assumptions made\n   - Explain methodology used\n   - Highlight limitations\n   - Suggest follow-up analysis\n\n3. **Error Handling**\n   - Report data inconsistencies\n   - Document missing data\n   - Provide alternative approaches\n   - Suggest data quality improvements\n\n4. **Follow-up Support**\n   - Be available for clarifications\n   - Provide additional analysis if needed\n   - Document frequently requested reports\n   - Maintain report templates\n\nRemember: Your role is crucial in providing data-driven insights that enable informed business decisions. Always ensure accuracy, clarity, and actionability in your reports. ",
-        "metadata": {},
-        "model": "gpt-4",
-        "name": "ReportingManager",
-        "object": "assistant",
-        "tools": [
-            {
-                "function": {
-                    "name": "SQLQueryTool",
-                    "description": "Tool for executing SQL queries with improved result handling.",
-                    "parameters": {
-                        "properties": {
-                            "query": {
-                                "description": "The natural language query to be converted into SQL and executed",
-                                "title": "Query",
-                                "type": "string"
-                            },
-                            "chunk_size": {
-                                "default": 100,
-                                "description": "Number of rows per chunk",
-                                "title": "Chunk Size",
-                                "type": "integer"
-                            },
-                            "max_tokens": {
-                                "default": 4000,
-                                "description": "Maximum tokens for GPT response",
-                                "title": "Max Tokens",
-                                "type": "integer"
-                            },
-                            "save_path": {
-                                "default": "inventory_results",
-                                "description": "Path to save query results",
-                                "title": "Save Path",
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "query"
-                        ],
-                        "type": "object"
-                    },
-                    "strict": false
-                },
-                "type": "function"
-            }
-        ],
-        "response_format": "auto",
-        "temperature": 0.5,
+        "temperature": 0.0,
         "tool_resources": {
             "code_interpreter": null,
             "file_search": null

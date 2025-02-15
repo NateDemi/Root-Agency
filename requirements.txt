@@ -1,3 +1,12 @@
 firebase-admin>=6.2.0
 slack-bolt>=1.18.0
-slack-sdk>=3.21.3 
+slack-sdk>=3.21.3
+google-cloud-storage>=2.14.0
+langchain>=0.1.0
+langchain-openai>=0.0.2.post1
+sqlalchemy>=2.0.25
+psycopg2-binary>=2.9.9
+python-dotenv>=1.0.0
+pandas>=2.1.4
+agency-swarm>=0.4.4
+gcsfs>=2024.2.0

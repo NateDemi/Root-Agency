@@ -16,25 +16,19 @@ load_dotenv(Path(__file__).parent / ".env")
 set_openai_key(os.environ["OPENAI_API_KEY"])
 
 # Initialize OpenAI client with project API key configuration
-client = openai.OpenAI(
-    api_key=os.environ["OPENAI_API_KEY"],
-    max_retries=10,
-    default_headers={"OpenAI-Beta": "assistants=v2"}
-)
-set_openai_client(client)
 
 # Initialize agents
 ceo = CEO()
 reporting_manager = ReportingManager()
 
-# Create agency
+# Create agency with proper communication flows
 agency = Agency(
     [
-        ceo,  # CEO is the entry point
-        [ceo, reporting_manager],  # CEO can communicate with Reporting Manager
+        reporting_manager,  # ReportingManager is the entry point for user communication
     ],
     shared_instructions='./agency_manifesto.md'
 )
 
 if __name__ == "__main__":
+    # Run the agency demo using the framework's built-in functionality
     agency.run_demo() 

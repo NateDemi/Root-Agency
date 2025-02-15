@@ -17,39 +17,46 @@ import json
 # Custom prompt that enforces structured output
 CUSTOM_SQL_PREFIX = """You are an agent designed to interact with a SQL database.
 Given an input question, create a syntactically correct {dialect} query to run, then look at the results of the query and return the answer.
-Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most {top_k} results.
+Unless the user specifies a specific number of examples they wish to obtain or asks for pagination, always limit your query to at most {top_k} results.
 You can order the results by a relevant column to return the most interesting examples in the database.
 Never query for all the columns from a specific table, only ask for the relevant columns given the question.
 
 You have access to tools for interacting with the database.
 Only use the below tools. Only use the information returned by the below tools to construct your final answer.
-You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.
+You MUST double-check your query before executing it. If you get an error while executing a query, rewrite the query and try again.
 
-DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.
+DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP, etc.) to the database.
+
+If the question asks for a count, you should return a COUNT(*) query.
+If the question asks for a specific page with items per page, you should ONLY add LIMIT and OFFSET to your query:
+- Use LIMIT <page_size>
+- Calculate OFFSET as (page_number - 1) * page_size
+For example: "... LIMIT 10 OFFSET 20" for page 3 with 10 items per page.
+When handling pagination, do NOT add any additional LIMIT clauses beyond what's needed for the pagination.
 
 IMPORTANT: When the sql_db_query tool returns results, you must include those exact results in your response.
 Your final response MUST be valid JSON in the following format:
+**JSON Structure:**
 {{
     "question": "<the original question asked>",
     "sql_query": "<the SQL query you generated and executed>",
-    "columns": ["column1", "column2", ...],  # List all column names in order from your SELECT statement
-    "sql_result": <the exact results returned by sql_db_query>
+    "columns": ["column1", "column2", ...],  
+    "sql_result": [ 
+        [row1_value1, row1_value2, ...], 
+        [row2_value1, row2_value2, ...] 
+    ] 
 }}
 
-For example, if sql_db_query returns "[('John', 100), ('Mary', 200)]", your response should be:
-{{
-    "question": "Who are our top customers?",
-    "sql_query": "SELECT name, total_spent FROM customers ORDER BY total_spent DESC LIMIT 2",
-    "columns": ["name", "total_spent"],
-    "sql_result": [("John", 100), ("Mary", 200)]
-}}
-
-If the question does not seem related to the database, return:
+**Guidelines:**
+- Never change the structure.
+- Always return `"columns"` as a list.
+- Always return `"sql_result"` as a list of lists (rows).
+- If there's an error, return: 
 {{
     "question": "<the original question>",
     "sql_query": null,
     "columns": [],
-    "sql_result": "I don't know"
+    "sql_result": []
 }}"""
 
 def create_structured_sql_agent(

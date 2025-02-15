@@ -1,0 +1,7 @@
+version: "2"
+authtoken: 2rpf3G9Cq7GSgLI1loAUAbpxgFu_4Zf9Xj4exbTDkwBNDtu3h
+tunnels:
+  retail:
+    proto: http
+    addr: 8001
+    hostname: prompt-gorgeous-skunk.ngrok-free.app 
