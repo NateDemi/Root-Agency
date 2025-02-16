@@ -174,24 +174,30 @@ async def slack_events(request: Request):
     """Handle Slack events and challenges."""
     try:
         # Get the raw request body
-        body = await request.json()
+        body = await request.body()
+        payload = json.loads(body)
         
         # Log the incoming request for debugging
-        print(f"Received Slack event: {json.dumps(body, indent=2)}")
+        print(f"Received Slack event: {json.dumps(payload, indent=2)}")
         
         # Handle URL verification challenge
-        if body.get("type") == "url_verification":
-            return {"challenge": body.get("challenge")}
+        if payload.get("type") == "url_verification":
+            challenge = payload.get("challenge")
+            print(f"Responding to challenge with: {challenge}")
+            return {"challenge": challenge}
             
         # Handle other Slack events
-        event_type = body.get("event", {}).get("type")
-        if event_type in ["app_mention", "message"]:
-            # Process the message event
-            # Your existing message handling logic here
-            pass
+        if "event" in payload:
+            event = payload.get("event", {})
+            event_type = event.get("type")
             
-        return {"status": "ok"}
+            if event_type in ["app_mention", "message"]:
+                # Process the message event
+                # Your existing message handling logic here
+                pass
+                
+        return {"ok": True}
         
     except Exception as e:
         print(f"Error handling Slack event: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e)) 
+        return {"ok": False, "error": str(e)} 
