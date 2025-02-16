@@ -173,23 +173,29 @@ async def check_connections():
 async def slack_events(request: Request):
     """Handle Slack events and challenges."""
     try:
-        # Get the raw request body
-        body = await request.body()
-        payload = json.loads(body)
+        # Get the raw request body as string
+        body_str = (await request.body()).decode('utf-8')
+        print(f"Raw request body: {body_str}")
         
-        # Log the incoming request for debugging
-        print(f"Received Slack event: {json.dumps(payload, indent=2)}")
+        # Parse the JSON
+        payload = json.loads(body_str)
+        print(f"Parsed payload: {json.dumps(payload, indent=2)}")
         
         # Handle URL verification challenge
         if payload.get("type") == "url_verification":
             challenge = payload.get("challenge")
-            print(f"Responding to challenge with: {challenge}")
-            return {"challenge": challenge}
+            print(f"Challenge received: {challenge}")
+            
+            # Construct the exact response Slack expects
+            response = {"challenge": challenge}
+            print(f"Sending response: {json.dumps(response, indent=2)}")
+            return response
             
         # Handle other Slack events
         if "event" in payload:
             event = payload.get("event", {})
             event_type = event.get("type")
+            print(f"Received event type: {event_type}")
             
             if event_type in ["app_mention", "message"]:
                 # Process the message event
@@ -199,5 +205,7 @@ async def slack_events(request: Request):
         return {"ok": True}
         
     except Exception as e:
-        print(f"Error handling Slack event: {str(e)}")
-        return {"ok": False, "error": str(e)} 
+        error_msg = f"Error handling Slack event: {str(e)}"
+        print(error_msg)
+        print(f"Exception details: {type(e).__name__}")
+        return {"ok": False, "error": error_msg} 
