@@ -186,10 +186,8 @@ async def slack_events(request: Request):
             challenge = payload.get("challenge")
             print(f"Challenge received: {challenge}")
             
-            # Construct the exact response Slack expects
-            response = {"challenge": challenge}
-            print(f"Sending response: {json.dumps(response, indent=2)}")
-            return response
+            # Return just the challenge string as per Slack's requirements
+            return challenge
             
         # Handle other Slack events
         if "event" in payload:
