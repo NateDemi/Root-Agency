@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "retail-assistant"
+version = "0.1.0"
+description = "A retail management assistant with AI-powered analytics and reporting capabilities"
+authors = ["Your Name <your.email@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+firebase-admin = "^6.2.0"
+slack-bolt = "^1.18.0"
+slack-sdk = "^3.21.3"
+openai = "^1.12.0"
+fastapi = "^0.109.0"
+uvicorn = "^0.34.0"
+python-dotenv = "^1.0.0"
+pydantic = "^2.6.1"
+agency-swarm = "^0.1.0"
+langchain-openai = "^0.0.5"
+langchain-community = "^0.0.19"
+psycopg2-binary = "^2.9.9"
+pandas = "^2.2.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+black = "^24.1.1"
+isort = "^5.13.2"
+flake8 = "^7.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3 
