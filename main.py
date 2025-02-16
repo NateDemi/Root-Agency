@@ -12,6 +12,7 @@ from sqlalchemy import create_engine
 import google.auth
 import google.auth.transport.requests
 import json
+from fastapi.responses import JSONResponse
 
 # Load environment variables
 load_dotenv()
@@ -186,8 +187,8 @@ async def slack_events(request: Request):
             challenge = payload.get("challenge")
             print(f"Challenge received: {challenge}")
             
-            # Return just the challenge string as per Slack's requirements
-            return challenge
+            # Return JSON response with challenge parameter
+            return JSONResponse(content={"challenge": challenge})
             
         # Handle other Slack events
         if "event" in payload:
